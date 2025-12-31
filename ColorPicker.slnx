@@ -1,3 +1,4 @@
 <Solution>
-  <Project Path="ColorPicker/ColorPicker.csproj" />
+  <Project Path="ColorPicker/ColorPicker.csproj" Id="3e79ad3e-4451-4b77-ae43-8e3b54ceb8d2" />
+  <Project Path="ColorPickerTest/ColorPickerTest.csproj" />
 </Solution>
