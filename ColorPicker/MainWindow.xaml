@@ -10,9 +10,12 @@
     Width="500"
     Height="600"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
 
     <Grid Margin="16">
-        <controls:ColorPicker SelectedColor="{Binding MyColor, Mode=TwoWay}" />
+        <controls:ColorPicker SelectedColor="{Binding MyColor}" />
     </Grid>
 
 </Window>

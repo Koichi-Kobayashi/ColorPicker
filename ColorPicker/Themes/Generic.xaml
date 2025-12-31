@@ -338,8 +338,15 @@
                                         x:Name="PART_PaletteSwatchButton"
                                         Style="{StaticResource PaletteSwatchButtonStyle}"
                                         Tag="{Binding}">
+                                        <Button.ToolTip>
+                                            <StackPanel>
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
+                                                <TextBlock Opacity="0.75" Text="{Binding TailwindName}" />
+                                            </StackPanel>
+                                        </Button.ToolTip>
+
                                         <Button.Background>
-                                            <SolidColorBrush Color="{Binding}" />
+                                            <SolidColorBrush Color="{Binding Color}" />
                                         </Button.Background>
                                     </Button>
                                 </DataTemplate>

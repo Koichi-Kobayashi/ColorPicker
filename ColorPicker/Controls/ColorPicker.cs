@@ -33,53 +33,47 @@ namespace ColorPicker.Controls
 
         public ColorPicker()
         {
-            PaletteColors = new ObservableCollection<Color>(new[]
+            PaletteColors = new ObservableCollection<PaletteColor>(new[]
             {
                 // warm
-                (Color)ColorConverter.ConvertFromString("#FFF59E0B"), // amber
-                (Color)ColorConverter.ConvertFromString("#FFF97316"), // orange
-                (Color)ColorConverter.ConvertFromString("#FFEA580C"), // orange dark
-                (Color)ColorConverter.ConvertFromString("#FFDC2626"), // red
-                (Color)ColorConverter.ConvertFromString("#FFEF4444"), // red
-                (Color)ColorConverter.ConvertFromString("#FFF43F5E"), // rose
+                new PaletteColor("アンバー",         "amber-500",  (Color)ColorConverter.ConvertFromString("#FFF59E0B")),
+                new PaletteColor("オレンジ",         "orange-500", (Color)ColorConverter.ConvertFromString("#FFF97316")),
+                new PaletteColor("ダークオレンジ",   "orange-600", (Color)ColorConverter.ConvertFromString("#FFEA580C")),
+                new PaletteColor("レッド（濃）",     "red-600",    (Color)ColorConverter.ConvertFromString("#FFDC2626")),
+                new PaletteColor("レッド",           "red-500",    (Color)ColorConverter.ConvertFromString("#FFEF4444")),
+                new PaletteColor("ローズ",           "rose-500",   (Color)ColorConverter.ConvertFromString("#FFF43F5E")),
+                new PaletteColor("ピンク",           "pink-500",   (Color)ColorConverter.ConvertFromString("#FFEC4899")),
+                new PaletteColor("ダークピンク",     "pink-600",   (Color)ColorConverter.ConvertFromString("#FFDB2777")),
 
-                // pink/purple
-                (Color)ColorConverter.ConvertFromString("#FFEC4899"),
-                (Color)ColorConverter.ConvertFromString("#FFDB2777"),
-                (Color)ColorConverter.ConvertFromString("#FFA855F7"),
-                (Color)ColorConverter.ConvertFromString("#FF7C3AED"),
-                (Color)ColorConverter.ConvertFromString("#FF6366F1"),
-                (Color)ColorConverter.ConvertFromString("#FF4F46E5"),
+                // purple/indigo
+                new PaletteColor("パープル",         "purple-500", (Color)ColorConverter.ConvertFromString("#FFA855F7")),
+                new PaletteColor("バイオレット（濃）","violet-600",(Color)ColorConverter.ConvertFromString("#FF7C3AED")),
+                new PaletteColor("インディゴ",       "indigo-500", (Color)ColorConverter.ConvertFromString("#FF6366F1")),
+                new PaletteColor("ダークインディゴ", "indigo-600", (Color)ColorConverter.ConvertFromString("#FF4F46E5")),
+                new PaletteColor("スカイブルー",     "sky-500",    (Color)ColorConverter.ConvertFromString("#FF0EA5E9")),
+                new PaletteColor("スカイブルー（濃）","sky-600",   (Color)ColorConverter.ConvertFromString("#FF0284C7")),
+                new PaletteColor("シアン",           "cyan-500",   (Color)ColorConverter.ConvertFromString("#FF06B6D4")),
+                new PaletteColor("シアン（濃）",     "cyan-600",   (Color)ColorConverter.ConvertFromString("#FF0891B2")),
 
-                // blue/cyan
-                (Color)ColorConverter.ConvertFromString("#FF0EA5E9"),
-                (Color)ColorConverter.ConvertFromString("#FF0284C7"),
-                (Color)ColorConverter.ConvertFromString("#FF06B6D4"),
-                (Color)ColorConverter.ConvertFromString("#FF0891B2"),
-                (Color)ColorConverter.ConvertFromString("#FF22C55E"),
-                (Color)ColorConverter.ConvertFromString("#FF16A34A"),
+                // greens/teals
+                new PaletteColor("グリーン",         "green-500",  (Color)ColorConverter.ConvertFromString("#FF22C55E")),
+                new PaletteColor("グリーン（濃）",   "green-600",  (Color)ColorConverter.ConvertFromString("#FF16A34A")),
+                new PaletteColor("エメラルド",       "emerald-500",(Color)ColorConverter.ConvertFromString("#FF10B981")),
+                new PaletteColor("エメラルド（濃）", "emerald-600",(Color)ColorConverter.ConvertFromString("#FF059669")),
+                new PaletteColor("ライム",           "lime-500",   (Color)ColorConverter.ConvertFromString("#FF84CC16")),
+                new PaletteColor("ライム（濃）",     "lime-600",   (Color)ColorConverter.ConvertFromString("#FF65A30D")),
+                new PaletteColor("ティール",         "teal-500",   (Color)ColorConverter.ConvertFromString("#FF14B8A6")),
+                new PaletteColor("ティール（濃）",   "teal-700",   (Color)ColorConverter.ConvertFromString("#FF0F766E")),
 
-                // greens
-                (Color)ColorConverter.ConvertFromString("#FF10B981"),
-                (Color)ColorConverter.ConvertFromString("#FF059669"),
-                (Color)ColorConverter.ConvertFromString("#FF84CC16"),
-                (Color)ColorConverter.ConvertFromString("#FF65A30D"),
-                (Color)ColorConverter.ConvertFromString("#FF14B8A6"),
-                (Color)ColorConverter.ConvertFromString("#FF0F766E"),
-
-                // grays
-                (Color)ColorConverter.ConvertFromString("#FF9CA3AF"),
-                (Color)ColorConverter.ConvertFromString("#FF6B7280"),
-                (Color)ColorConverter.ConvertFromString("#FF4B5563"),
-                (Color)ColorConverter.ConvertFromString("#FF374151"),
-                (Color)ColorConverter.ConvertFromString("#FF1F2937"),
-                (Color)ColorConverter.ConvertFromString("#FF111827"),
-
-                (Color)ColorConverter.ConvertFromString("#FFF3F4F6"),
-                (Color)ColorConverter.ConvertFromString("#FFFFFFFF"),
-
-                //(Color)ColorConverter.ConvertFromString("#FFFFFFFF"), // white
-                //(Color)ColorConverter.ConvertFromString("#FF000000"), // black
+                // grays (32個に揃える例)
+                new PaletteColor("ライトグレー",     "gray-300",   (Color)ColorConverter.ConvertFromString("#FFD1D5DB")),
+                new PaletteColor("グレー（明）",     "gray-400",   (Color)ColorConverter.ConvertFromString("#FF9CA3AF")),
+                new PaletteColor("グレー",           "gray-500",   (Color)ColorConverter.ConvertFromString("#FF6B7280")),
+                new PaletteColor("ダークグレー",     "gray-600",   (Color)ColorConverter.ConvertFromString("#FF4B5563")),
+                new PaletteColor("スレート",         "gray-700",   (Color)ColorConverter.ConvertFromString("#FF374151")),
+                new PaletteColor("ダークスレート",   "gray-800",   (Color)ColorConverter.ConvertFromString("#FF1F2937")),
+                new PaletteColor("ほぼ黒",           "gray-900",   (Color)ColorConverter.ConvertFromString("#FF111827")),
+                new PaletteColor("白",               "white",      (Color)ColorConverter.ConvertFromString("#FFFFFFFF")),
             });
         }
 
@@ -102,7 +96,8 @@ namespace ColorPicker.Controls
                 nameof(SelectedColor),
                 typeof(Color),
                 typeof(ColorPicker),
-                new FrameworkPropertyMetadata(Colors.Red,
+                new FrameworkPropertyMetadata(
+                    Colors.Transparent,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                     OnSelectedColorChanged));
 
@@ -175,13 +170,13 @@ namespace ColorPicker.Controls
         public static readonly DependencyProperty PaletteColorsProperty =
             DependencyProperty.Register(
                 nameof(PaletteColors),
-                typeof(ObservableCollection<Color>),
+                typeof(ObservableCollection<PaletteColor>),
                 typeof(ColorPicker),
                 new FrameworkPropertyMetadata(null));
 
-        public ObservableCollection<Color> PaletteColors
+        public ObservableCollection<PaletteColor> PaletteColors
         {
-            get => (ObservableCollection<Color>)GetValue(PaletteColorsProperty);
+            get => (ObservableCollection<PaletteColor>)GetValue(PaletteColorsProperty);
             set => SetValue(PaletteColorsProperty, value);
         }
 
@@ -285,17 +280,18 @@ namespace ColorPicker.Controls
             // パレットのタイルボタンだけ処理（TagにColorを入れる）
             if (e.OriginalSource is Button btn && btn.Name == "PART_PaletteSwatchButton")
             {
-                if (btn.Tag is Color c)
+                if (btn.Tag is PaletteColor pc)
                 {
                     // 現在のAlphaを維持して RGB だけ変える
-                    var a = (byte)Math.Round(Clamp(Alpha, 0, 1) * 255);
-                    SelectedColor = Color.FromArgb(a, c.R, c.G, c.B);
+                    var a = (byte)Math.Round(Math.Clamp(Alpha, 0, 1) * 255);
+                    SelectedColor = Color.FromArgb(a, pc.Color.R, pc.Color.G, pc.Color.B);
 
                     // HSVとThumbも同期
                     SyncFromSelectedColor(SelectedColor);
                     RenderSpectrum();
                     UpdateThumbPosition();
                 }
+
             }
         }
 
@@ -303,12 +299,18 @@ namespace ColorPicker.Controls
 
         private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var cp = (ColorPicker)d;
-            if (cp._isTemplateUpdating) return;
+            var c = (ColorPicker)d;
+            if (e.NewValue is not Color color) return;
 
-            cp.SyncFromSelectedColor((Color)e.NewValue);
-            cp.RenderSpectrum(); // Hueが変わる可能性があるので再描画
-            cp.UpdateThumbPosition();
+            // 1) HSV と Alpha(0..1) を SelectedColor から復元
+            c.SyncFromSelectedColor(color);
+
+            // 2) UI（ビットマップ/つまみ）を更新
+            c.RenderSpectrum();
+            c.UpdateThumbPosition();
+
+            // 3) Hue/Alpha スライダーの値も見た目上追従させる
+            // （TemplateBinding/Bindingなら通常不要だが、念のため）
         }
 
         private static void OnHSVChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
