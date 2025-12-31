@@ -283,7 +283,7 @@ namespace ColorPicker.Controls
                 if (btn.Tag is PaletteColor pc)
                 {
                     // 現在のAlphaを維持して RGB だけ変える
-                    var a = (byte)Math.Round(Math.Clamp(Alpha, 0, 1) * 255);
+                    var a = (byte)Math.Round(Clamp(Alpha, 0, 1) * 255);
                     SelectedColor = Color.FromArgb(a, pc.Color.R, pc.Color.G, pc.Color.B);
 
                     // HSVとThumbも同期
