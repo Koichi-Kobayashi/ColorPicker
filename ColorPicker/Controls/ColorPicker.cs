@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -13,6 +13,7 @@ namespace ColorPicker.Controls
     [TemplatePart(Name = PartSpectrumThumb, Type = typeof(Thumb))]
     [TemplatePart(Name = PartHueSlider, Type = typeof(Slider))]
     [TemplatePart(Name = PartAlphaSlider, Type = typeof(Slider))]
+    [TemplatePart(Name = PartPaletteItems, Type = typeof(ItemsControl))]
     public class ColorPicker : Control
     {
         private const string PartSpectrumImage = "PART_SpectrumImage";
@@ -20,11 +21,66 @@ namespace ColorPicker.Controls
         private const string PartSpectrumThumb = "PART_SpectrumThumb";
         private const string PartHueSlider = "PART_HueSlider";
         private const string PartAlphaSlider = "PART_AlphaSlider";
+        private const string PartPaletteItems = "PART_PaletteItems";
+
+        private ItemsControl? _paletteItems;
 
         static ColorPicker()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorPicker),
                 new FrameworkPropertyMetadata(typeof(ColorPicker)));
+        }
+
+        public ColorPicker()
+        {
+            PaletteColors = new ObservableCollection<Color>(new[]
+            {
+                // warm
+                (Color)ColorConverter.ConvertFromString("#FFF59E0B"), // amber
+                (Color)ColorConverter.ConvertFromString("#FFF97316"), // orange
+                (Color)ColorConverter.ConvertFromString("#FFEA580C"), // orange dark
+                (Color)ColorConverter.ConvertFromString("#FFDC2626"), // red
+                (Color)ColorConverter.ConvertFromString("#FFEF4444"), // red
+                (Color)ColorConverter.ConvertFromString("#FFF43F5E"), // rose
+
+                // pink/purple
+                (Color)ColorConverter.ConvertFromString("#FFEC4899"),
+                (Color)ColorConverter.ConvertFromString("#FFDB2777"),
+                (Color)ColorConverter.ConvertFromString("#FFA855F7"),
+                (Color)ColorConverter.ConvertFromString("#FF7C3AED"),
+                (Color)ColorConverter.ConvertFromString("#FF6366F1"),
+                (Color)ColorConverter.ConvertFromString("#FF4F46E5"),
+
+                // blue/cyan
+                (Color)ColorConverter.ConvertFromString("#FF0EA5E9"),
+                (Color)ColorConverter.ConvertFromString("#FF0284C7"),
+                (Color)ColorConverter.ConvertFromString("#FF06B6D4"),
+                (Color)ColorConverter.ConvertFromString("#FF0891B2"),
+                (Color)ColorConverter.ConvertFromString("#FF22C55E"),
+                (Color)ColorConverter.ConvertFromString("#FF16A34A"),
+
+                // greens
+                (Color)ColorConverter.ConvertFromString("#FF10B981"),
+                (Color)ColorConverter.ConvertFromString("#FF059669"),
+                (Color)ColorConverter.ConvertFromString("#FF84CC16"),
+                (Color)ColorConverter.ConvertFromString("#FF65A30D"),
+                (Color)ColorConverter.ConvertFromString("#FF14B8A6"),
+                (Color)ColorConverter.ConvertFromString("#FF0F766E"),
+
+                // grays
+                (Color)ColorConverter.ConvertFromString("#FF9CA3AF"),
+                (Color)ColorConverter.ConvertFromString("#FF6B7280"),
+                (Color)ColorConverter.ConvertFromString("#FF4B5563"),
+                (Color)ColorConverter.ConvertFromString("#FF374151"),
+                (Color)ColorConverter.ConvertFromString("#FF1F2937"),
+                (Color)ColorConverter.ConvertFromString("#FF111827"),
+
+                (Color)ColorConverter.ConvertFromString("#FFF3F4F6"),
+                (Color)ColorConverter.ConvertFromString("#FFFFFFFF"),
+
+                //(Color)ColorConverter.ConvertFromString("#FFFFFFFF"), // white
+                //(Color)ColorConverter.ConvertFromString("#FF000000"), // black
+            });
         }
 
         private Image? _spectrumImage;
@@ -116,6 +172,19 @@ namespace ColorPicker.Controls
             set => SetValue(AlphaProperty, value);
         }
 
+        public static readonly DependencyProperty PaletteColorsProperty =
+            DependencyProperty.Register(
+                nameof(PaletteColors),
+                typeof(ObservableCollection<Color>),
+                typeof(ColorPicker),
+                new FrameworkPropertyMetadata(null));
+
+        public ObservableCollection<Color> PaletteColors
+        {
+            get => (ObservableCollection<Color>)GetValue(PaletteColorsProperty);
+            set => SetValue(PaletteColorsProperty, value);
+        }
+
         private static object CoerceHue(DependencyObject d, object baseValue)
         {
             var v = (double)baseValue;
@@ -147,6 +216,10 @@ namespace ColorPicker.Controls
             _spectrumThumb = GetTemplateChild(PartSpectrumThumb) as Thumb;
             _hueSlider = GetTemplateChild(PartHueSlider) as Slider;
             _alphaSlider = GetTemplateChild(PartAlphaSlider) as Slider;
+            _paletteItems = GetTemplateChild(PartPaletteItems) as ItemsControl;
+
+            // パレットクリック（バブリング）をこのコントロールで拾う
+            AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnAnyButtonClick));
 
             Attach();
 
@@ -205,6 +278,25 @@ namespace ColorPicker.Controls
 
             if (_spectrumThumb != null)
                 _spectrumThumb.DragDelta -= OnThumbDragDelta;
+        }
+
+        private void OnAnyButtonClick(object sender, RoutedEventArgs e)
+        {
+            // パレットのタイルボタンだけ処理（TagにColorを入れる）
+            if (e.OriginalSource is Button btn && btn.Name == "PART_PaletteSwatchButton")
+            {
+                if (btn.Tag is Color c)
+                {
+                    // 現在のAlphaを維持して RGB だけ変える
+                    var a = (byte)Math.Round(Clamp(Alpha, 0, 1) * 255);
+                    SelectedColor = Color.FromArgb(a, c.R, c.G, c.B);
+
+                    // HSVとThumbも同期
+                    SyncFromSelectedColor(SelectedColor);
+                    RenderSpectrum();
+                    UpdateThumbPosition();
+                }
+            }
         }
 
         #region Property change callbacks

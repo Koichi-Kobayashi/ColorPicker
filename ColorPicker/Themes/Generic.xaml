@@ -5,6 +5,8 @@
 
     <local:ColorWithAlphaConverter x:Key="ColorWithAlphaConverter" />
     <local:ColorToHexConverter x:Key="ColorToHexConverter" />
+    <local:ColorAlphaBlendConverter x:Key="ColorAlphaBlendConverter" />
+    <local:ColorAlphaBlendToHexMultiConverter x:Key="ColorAlphaBlendToHexMultiConverter" />
 
     <!--
         =========================
@@ -44,6 +46,40 @@
         <GradientStop Offset="0.83" Color="#FFFF00FF" />
         <GradientStop Offset="1.00" Color="#FFFF0000" />
     </LinearGradientBrush>
+
+    <Style x:Key="PaletteSwatchButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="Margin" Value="6,6,0,0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                        <Border.Effect>
+                            <DropShadowEffect
+                                BlurRadius="6"
+                                Opacity="0.15"
+                                ShadowDepth="0" />
+                        </Border.Effect>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="0.9" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" Value="0.75" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!--  thumb style (WinUIっぽい輪っか)  -->
     <Style x:Key="RingThumbStyle" TargetType="{x:Type Thumb}">
@@ -180,10 +216,19 @@
                 <ControlTemplate TargetType="{x:Type local:ColorPicker}">
                     <Grid Margin="4">
                         <Grid.RowDefinitions>
+                            <!--  0: Spectrum  -->
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="10" />
+                            <!--  1  -->
+                            <RowDefinition Height="12" />
+                            <!--  2: Hue  -->
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="10" />
+                            <!--  3  -->
+                            <RowDefinition Height="12" />
+                            <!--  4: Palette  -->
+                            <RowDefinition Height="Auto" />
+                            <!--  5  -->
+                            <RowDefinition Height="16" />
+                            <!--  6: Alpha  -->
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
@@ -216,7 +261,8 @@
                                 <ColumnDefinition Width="42" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="54" />
-                                <ColumnDefinition Width="110" />
+                                <!--  RGB (#RRGGBB)  -->
+                                <ColumnDefinition Width="90" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock
@@ -257,6 +303,7 @@
                                 Opacity="0.75"
                                 Text="{Binding Hue, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}{0:0}}" />
 
+                            <!--  RGB (#RRGGBB)  -->
                             <TextBox
                                 Grid.Column="3"
                                 Height="22"
@@ -270,14 +317,43 @@
                                 FontFamily="Consolas"
                                 IsReadOnly="True"
                                 Text="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ColorToHexConverter}, ConverterParameter=RGB}" />
+
                         </Grid>
 
+                        <!--  Palette (between Hue and Alpha)  -->
+                        <ItemsControl
+                            x:Name="PART_PaletteItems"
+                            Grid.Row="4"
+                            Margin="42,8,0,0"
+                            ItemsSource="{Binding PaletteColors, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        x:Name="PART_PaletteSwatchButton"
+                                        Style="{StaticResource PaletteSwatchButtonStyle}"
+                                        Tag="{Binding}">
+                                        <Button.Background>
+                                            <SolidColorBrush Color="{Binding}" />
+                                        </Button.Background>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
                         <!--  Alpha slider (checker + alpha gradient overlay)  -->
-                        <Grid Grid.Row="4" VerticalAlignment="Center">
+                        <Grid Grid.Row="6" VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="42" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="54" />
+                                <!--  RGB (#RRGGBB)  -->
+                                <ColumnDefinition Width="90" />
                             </Grid.ColumnDefinitions>
 
                             <TextBlock
@@ -336,6 +412,21 @@
                                     </Border.Background>
                                 </Border>
                             </Border>
+
+                            <!--  RGBA (#AARRGGBB)  -->
+                            <TextBox
+                                Grid.Column="3"
+                                Height="22"
+                                Margin="6,0,0,0"
+                                Padding="8,0"
+                                VerticalContentAlignment="Center"
+                                local:TextBoxSelectAllBehavior.SelectAllOnFocus="True"
+                                Background="#0C000000"
+                                BorderBrush="#22000000"
+                                BorderThickness="1"
+                                FontFamily="Consolas"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ColorToHexConverter}}" />
                         </Grid>
 
                     </Grid>
