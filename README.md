@@ -1,3 +1,3 @@
 # ColorPicker
 WPF用のカラーピッカーサンプル  
-<img width="486" height="593" alt="looks" src="https://github.com/user-attachments/assets/58b2af2c-808b-4d7d-b908-2bb4e51dd3b6" />
+<<img width="486" height="643" alt="2026-01-01_17h27_30" src="https://github.com/user-attachments/assets/75f35433-9a01-46b6-8ab3-ef62cdbe3928" />
