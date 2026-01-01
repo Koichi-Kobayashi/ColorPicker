@@ -229,7 +229,7 @@
                             <!--  4: Palette  -->
                             <RowDefinition Height="Auto" />
                             <!--  5  -->
-                            <RowDefinition Height="16" />
+                            <RowDefinition Height="22" />
                             <!--  6: Alpha  -->
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
