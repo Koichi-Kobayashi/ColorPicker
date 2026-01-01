@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ColorPicker.Controls.Util;
 
 namespace ColorPicker.Controls
 {
@@ -283,7 +284,7 @@ namespace ColorPicker.Controls
                 if (btn.Tag is PaletteColor pc)
                 {
                     // 現在のAlphaを維持して RGB だけ変える
-                    var a = (byte)Math.Round(Clamp(Alpha, 0, 1) * 255);
+                    var a = (byte)Math.Round(MathUtil.Clamp(Alpha, 0, 1) * 255);
                     SelectedColor = Color.FromArgb(a, pc.Color.R, pc.Color.G, pc.Color.B);
 
                     // HSVとThumbも同期
@@ -391,8 +392,8 @@ namespace ColorPicker.Controls
             var tw = _spectrumThumb?.ActualWidth ?? 0;
             var th = _spectrumThumb?.ActualHeight ?? 0;
 
-            var x = Clamp(p.X, tw / 2, w - tw / 2);
-            var y = Clamp(p.Y, th / 2, h - th / 2);
+            var x = MathUtil.Clamp(p.X, tw / 2, w - tw / 2);
+            var y = MathUtil.Clamp(p.Y, th / 2, h - th / 2);
 
             var s = x / w;
             var v = 1.0 - (y / h);
@@ -505,8 +506,8 @@ namespace ColorPicker.Controls
             var x = Saturation * w;
             var y = (1.0 - Value) * h;
 
-            x = Clamp(x, tw / 2, w - tw / 2);
-            y = Clamp(y, th / 2, h - th / 2);
+            x = MathUtil.Clamp(x, tw / 2, w - tw / 2);
+            y = MathUtil.Clamp(y, th / 2, h - th / 2);
 
             Canvas.SetLeft(_spectrumThumb, x - tw / 2);
             Canvas.SetTop(_spectrumThumb, y - th / 2);
@@ -549,10 +550,6 @@ namespace ColorPicker.Controls
                 _isTemplateUpdating = false;
             }
         }
-
-        private static double Clamp(double v, double min, double max)
-            => v < min ? min : (v > max ? max : v);
-
         #endregion
     }
 }

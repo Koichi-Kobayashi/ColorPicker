@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using ColorPicker.Controls.Util;
 
 namespace ColorPicker.Controls
 {
@@ -30,7 +31,7 @@ namespace ColorPicker.Controls
                 catch { }
             }
 
-            alpha = Math.Clamp(alpha, 0.0, 1.0);
+            alpha = MathUtil.Clamp(alpha, 0.0, 1.0);
 
             byte r = (byte)Math.Round(src.R * alpha + bg.R * (1 - alpha));
             byte g = (byte)Math.Round(src.G * alpha + bg.G * (1 - alpha));
@@ -41,5 +42,6 @@ namespace ColorPicker.Controls
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
             => throw new NotSupportedException();
+
     }
 }
