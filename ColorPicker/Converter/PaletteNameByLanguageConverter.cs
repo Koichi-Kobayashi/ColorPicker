@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using ColorPicker.Controls;
 
-namespace ColorPicker.Controls.Converter
+namespace ColorPicker.Converter
 {
     /// <summary>
     /// values[0] = PaletteColor

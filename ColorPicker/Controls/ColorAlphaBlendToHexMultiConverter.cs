@@ -3,7 +3,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using ColorPicker.Controls.Util;
 
-namespace ColorPicker.Controls
+namespace ColorPicker.Converter
 {
     /// <summary>
     /// values[0] : SelectedColor (Color)

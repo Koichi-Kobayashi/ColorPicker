@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace ColorPicker.Controls
+namespace ColorPicker.Converter
 {
     /// <summary>
     /// Color + alpha(byte 0..255) -> Color

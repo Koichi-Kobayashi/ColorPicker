@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace ColorPicker.Controls
+namespace ColorPicker.Converter
 {
     public sealed class ColorAlphaBlendToHexConverter : IValueConverter
     {

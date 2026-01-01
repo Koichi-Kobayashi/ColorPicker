@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using ColorPicker.Controls;
 
-namespace ColorPicker.Converters
+namespace ColorPicker.Converter
 {
     // values[0] = PaletteColor
     // values[1] = ToolTipLanguage ("ja"/"en")

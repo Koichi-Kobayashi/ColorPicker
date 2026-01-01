@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace ColorPicker.Controls
+namespace ColorPicker.Converter
 {
     /// <summary>
     /// SelectedColor を指定した背景色と Alpha Blend した結果の Color を返す
