@@ -6,13 +6,15 @@ namespace ColorPicker.Controls
     // TailwindName = tailwind名（例: amber-500）
     public sealed class PaletteColor
     {
-        public string DisplayName { get; }
+        public string NameJa { get; }
+        public string NameEn { get; }
         public string TailwindName { get; }
         public Color Color { get; }
 
-        public PaletteColor(string displayName, string tailwindName, Color color)
+        public PaletteColor(string nameJa, string nameEn, string tailwindName, Color color)
         {
-            DisplayName = displayName;
+            NameJa = nameJa;
+            NameEn = nameEn;
             TailwindName = tailwindName;
             Color = color;
         }

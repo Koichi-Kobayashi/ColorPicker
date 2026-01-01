@@ -15,7 +15,7 @@
     </Window.DataContext>
 
     <Grid Margin="16">
-        <controls:ColorPicker SelectedColor="{Binding MyColor}" />
+        <controls:ColorPicker SelectedColor="{Binding MyColor}" ToolTipLanguage="en" />
     </Grid>
 
 </Window>
