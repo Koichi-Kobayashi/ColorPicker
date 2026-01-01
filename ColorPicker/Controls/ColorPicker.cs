@@ -15,7 +15,7 @@ namespace ColorPicker.Controls
     [TemplatePart(Name = PartHueSlider, Type = typeof(Slider))]
     [TemplatePart(Name = PartAlphaSlider, Type = typeof(Slider))]
     [TemplatePart(Name = PartPaletteItems, Type = typeof(ItemsControl))]
-    public class ColorPicker : Control
+    public partial class ColorPicker : Control
     {
         private const string PartSpectrumImage = "PART_SpectrumImage";
         private const string PartSpectrumCanvas = "PART_SpectrumCanvas";
@@ -24,6 +24,7 @@ namespace ColorPicker.Controls
         private const string PartAlphaSlider = "PART_AlphaSlider";
         private const string PartPaletteItems = "PART_PaletteItems";
 
+        private bool _syncing;
         private ItemsControl? _paletteItems;
 
         static ColorPicker()
@@ -234,6 +235,9 @@ namespace ColorPicker.Controls
             // パレットクリック（バブリング）をこのコントロールで拾う
             AddHandler(ButtonBase.ClickEvent, new RoutedEventHandler(OnAnyButtonClick));
 
+            // RGB/Drag hook（RGB.cs のメソッド）
+            HookAllSlidersForDrag();
+
             Attach();
 
             // 初期同期
@@ -315,22 +319,6 @@ namespace ColorPicker.Controls
 
         #region Property change callbacks
 
-        private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var c = (ColorPicker)d;
-            if (e.NewValue is not Color color) return;
-
-            // 1) HSV と Alpha(0..1) を SelectedColor から復元
-            c.SyncFromSelectedColor(color);
-
-            // 2) UI（ビットマップ/つまみ）を更新
-            c.RenderSpectrum();
-            c.UpdateThumbPosition();
-
-            // 3) Hue/Alpha スライダーの値も見た目上追従させる
-            // （TemplateBinding/Bindingなら通常不要だが、念のため）
-        }
-
         private static void OnHSVChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var cp = (ColorPicker)d;
@@ -348,10 +336,20 @@ namespace ColorPicker.Controls
 
         private static void OnAlphaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var cp = (ColorPicker)d;
-            if (cp._isTemplateUpdating) return;
+            var c = (ColorPicker)d;
+            if (c._syncing) return;
 
-            cp.UpdateSelectedColorFromHSV();
+            c._syncing = true;
+            try
+            {
+                var a = (byte)Math.Round(c.Alpha * 255.0); // Alphaが0..1なら
+                var sc = c.SelectedColor;
+                c.SelectedColor = Color.FromArgb(a, sc.R, sc.G, sc.B);
+            }
+            finally
+            {
+                c._syncing = false;
+            }
         }
 
         #endregion
@@ -428,6 +426,53 @@ namespace ColorPicker.Controls
 
             UpdateSelectedColorFromHSV();
             UpdateThumbPosition();
+        }
+
+        private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var c = (ColorPicker)d;
+            if (e.NewValue is not Color color) return;
+            if (c._syncing) return;
+
+            c._syncing = true;
+            try
+            {
+                var dragging = c._draggingPartName;
+
+                // --- 常に: RGB 表示は（ドラッグ中でも）追従させてOK ---
+                // ただし、RGB 自体をドラッグ中ならその成分は書き戻さない
+                if (dragging != "PART_RSlider") c.SetCurrentValue(RProperty, color.R);
+                if (dragging != "PART_GSlider") c.SetCurrentValue(GProperty, color.G);
+                if (dragging != "PART_BSlider") c.SetCurrentValue(BProperty, color.B);
+
+                // --- Alpha ドラッグ中: ここで終了（戻り防止） ---
+                // ※Alpha 以外の重い同期（HSV再計算/描画/つまみ位置更新）を一切しない
+                if (dragging == "PART_AlphaSlider")
+                {
+                    // Alpha表示用のDPがあるなら、"書き戻し"はしない（必要なら他表示だけ）
+                    // 例: AlphaText のみ更新、など。
+                    return;
+                }
+
+                // --- Hue ドラッグ中: Hue 自体は書き戻さない（あなたの Hue DP があるなら） ---
+                if (dragging == "PART_HueSlider")
+                {
+                    // Hue/SV再計算はドラッグ側が主導なので、ここでは余計な再同期をしない
+                    // 必要ならRGBやテキスト等だけ更新して return でもOK
+                    // いったん戻り防止優先で return（安定）
+                    return;
+                }
+
+                // --- それ以外（パレットクリック、SV面クリック、外部からSelectedColor変更など） ---
+                // ここでまとめて内部状態を同期＆描画更新
+                c.SyncFromSelectedColor(color);
+                c.RenderSpectrum();
+                c.UpdateThumbPosition();
+            }
+            finally
+            {
+                c._syncing = false;
+            }
         }
 
         #endregion

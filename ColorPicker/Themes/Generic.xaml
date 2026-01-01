@@ -9,6 +9,7 @@
     <converter:ColorAlphaBlendConverter x:Key="ColorAlphaBlendConverter" />
     <converter:ColorAlphaBlendToHexMultiConverter x:Key="ColorAlphaBlendToHexMultiConverter" />
     <converter:PaletteToolTipTextConverter x:Key="PaletteToolTipTextConverter" />
+    <converter:ByteConverter x:Key="ByteConverter" />
 
     <!--
         =========================
@@ -48,6 +49,96 @@
         <GradientStop Offset="0.83" Color="#FFFF00FF" />
         <GradientStop Offset="1.00" Color="#FFFF0000" />
     </LinearGradientBrush>
+
+    <Style x:Key="WinUIRoundThumbGradientSliderStyle" TargetType="{x:Type Slider}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsMoveToPointEnabled" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Slider}">
+                    <Grid Margin="2">
+                        <Track
+                            x:Name="PART_Track"
+                            VerticalAlignment="Center"
+                            IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+
+                            <!--  値まで（黒 → Foreground）  -->
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton
+                                    BorderThickness="0"
+                                    Command="Slider.DecreaseLarge"
+                                    IsTabStop="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                            <Border
+                                                Height="14"
+                                                VerticalAlignment="Center"
+                                                CornerRadius="4">
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Offset="0" Color="Black" />
+                                                        <GradientStop Offset="1" Color="{Binding Foreground.Color, RelativeSource={RelativeSource AncestorType=Slider}}" />
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+
+                            <!--  残り（薄グレー）  -->
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton
+                                    BorderThickness="0"
+                                    Command="Slider.IncreaseLarge"
+                                    IsTabStop="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                            <Border
+                                                Height="14"
+                                                VerticalAlignment="Center"
+                                                Background="#33000000"
+                                                CornerRadius="4" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+
+                            <!--  丸つまみ（共通）  -->
+                            <Track.Thumb>
+                                <Thumb
+                                    Width="18"
+                                    Height="18"
+                                    Cursor="Hand">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="{x:Type Thumb}">
+                                            <Grid>
+                                                <Ellipse
+                                                    Fill="White"
+                                                    Stroke="#66000000"
+                                                    StrokeThickness="1" />
+                                                <Ellipse>
+                                                    <Ellipse.Effect>
+                                                        <DropShadowEffect
+                                                            BlurRadius="8"
+                                                            Opacity="0.30"
+                                                            ShadowDepth="1" />
+                                                    </Ellipse.Effect>
+                                                </Ellipse>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="PaletteSwatchButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="44" />
@@ -211,6 +302,12 @@
         ColorPicker Template
         =========================
     -->
+    <!--  red-500  -->
+    <SolidColorBrush x:Key="RSliderBrush" Color="#FFEF4444" />
+    <!--  green-500  -->
+    <SolidColorBrush x:Key="GSliderBrush" Color="#FF22C55E" />
+    <!--  blue-500  -->
+    <SolidColorBrush x:Key="BSliderBrush" Color="#FF3B82F6" />
     <Style TargetType="{x:Type local:ColorPicker}">
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Template">
@@ -230,7 +327,11 @@
                             <RowDefinition Height="Auto" />
                             <!--  5  -->
                             <RowDefinition Height="22" />
-                            <!--  6: Alpha  -->
+                            <!--  6: RGB  -->
+                            <RowDefinition Height="Auto" />
+                            <!--  7  -->
+                            <RowDefinition Height="22" />
+                            <!--  8: Alpha  -->
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
@@ -356,8 +457,87 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <Grid Grid.Row="6" Margin="0,4,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="12" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="12" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="52" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  R  -->
+                            <TextBlock VerticalAlignment="Center" Text="R" />
+
+                            <Slider
+                                Grid.Column="1"
+                                Margin="22,0,6,0"
+                                Foreground="{StaticResource RSliderBrush}"
+                                IsMoveToPointEnabled="True"
+                                Maximum="255"
+                                Minimum="0"
+                                Style="{StaticResource WinUIRoundThumbGradientSliderStyle}"
+                                Value="{Binding R, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <TextBox
+                                Grid.Column="2"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding R, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Converter={StaticResource ByteConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <!--  G  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                VerticalAlignment="Center"
+                                Text="G" />
+
+                            <Slider
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="22,0,6,0"
+                                Foreground="{StaticResource GSliderBrush}"
+                                IsMoveToPointEnabled="True"
+                                Maximum="255"
+                                Minimum="0"
+                                Style="{StaticResource WinUIRoundThumbGradientSliderStyle}"
+                                Value="{Binding G, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding G, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Converter={StaticResource ByteConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <!--  B  -->
+                            <TextBlock
+                                Grid.Row="4"
+                                VerticalAlignment="Center"
+                                Text="B" />
+
+                            <Slider
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="22,0,6,0"
+                                Foreground="{StaticResource BSliderBrush}"
+                                IsMoveToPointEnabled="True"
+                                Maximum="255"
+                                Minimum="0"
+                                Style="{StaticResource WinUIRoundThumbGradientSliderStyle}"
+                                Value="{Binding B, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding B, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Converter={StaticResource ByteConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+
                         <!--  Alpha slider (checker + alpha gradient overlay)  -->
-                        <Grid Grid.Row="6" VerticalAlignment="Center">
+                        <Grid Grid.Row="8" VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="42" />
                                 <ColumnDefinition Width="*" />
